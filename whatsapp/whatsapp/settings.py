@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-gnh(!u0!h&m029*$+*84+o%oh!7qwdoz%j-**9@ut9!!)7vcna
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -42,11 +42,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'phone_numbers',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -130,3 +133,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Environment variables for Facebook Graph API
 BUSINESS_PORTFOLIO_ID = os.environ.get('BUSINESS_PORTFOLIO_ID')
 ACCESS_TOKEN = os.environ.get('ACCESS_TOKEN')
+
+CORS_ALLOW_ALL_ORIGINS = True
