@@ -119,3 +119,42 @@ def get_waba_phone_numbers(request):
             {"error": f"Failed to get waba phone numbers: {str(e)}"}, 
             status=500
         )
+    
+@api_view(['POST'])
+def register_phone_number(request):
+    try:
+        if not getattr(settings, 'ACCESS_TOKEN', None):
+            return Response(
+                {"error": "ACCESS_TOKEN not found in environment variables"}, 
+                status=400
+            )
+        access_token = getattr(settings, 'ACCESS_TOKEN', None)
+        waba_phone_number_id = request.data.get('waba_phone_number_id')
+
+        url = f"https://graph.facebook.com/v23.0/{waba_phone_number_id}/register"
+        request_body = {
+            "messaging_product": "whatsapp",
+            "pin": request.data.get('pin')
+        }
+
+        params = {
+            "access_token": access_token
+        }
+
+        response = requests.post(url, json=request_body, params=params)
+
+        if response.status_code != 200:
+            return Response({
+                "error": f"Facebook API error: {response.status_code}",
+                "details": response.text,
+                "url": url
+            }, status=response.status_code)
+        
+        return Response(response.json())
+    
+    except Exception as e:
+        return Response(
+            {"error": f"Failed to register phone number: {str(e)}"}, 
+            status=500
+        )
+    
