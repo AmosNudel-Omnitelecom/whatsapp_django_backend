@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'phone_numbers',
+    'wabas',
     'corsheaders',
 ]
 

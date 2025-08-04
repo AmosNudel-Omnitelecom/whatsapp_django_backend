@@ -2,9 +2,9 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('phone-numbers/', views.get_phone_numbers, name='get_phone_numbers'),
-    path('phone-numbers/add/', views.add_phone_number, name='add_phone_number'),
-    path('phone-numbers/delete/', views.delete_phone_number, name='delete_phone_number'),
-    path('phone-numbers/request-code/', views.request_verification_code, name='request_verification_code'),
-    path('phone-numbers/verify-code/', views.verify_code, name='verify_code'),
+    path('', views.get_phone_numbers, name='get_phone_numbers'),
+    path('add/', views.add_phone_number, name='add_phone_number'),
+    path('delete/', views.delete_phone_number, name='delete_phone_number'),
+    path('request-code/', views.request_verification_code, name='request_verification_code'),
+    path('verify-code/', views.verify_code, name='verify_code'),
 ]
