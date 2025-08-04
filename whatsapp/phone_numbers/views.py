@@ -92,7 +92,76 @@ def add_phone_number(request):
             {"error": f"Failed to add phone number: {str(e)}"}, 
             status=500
         )
-    
-    
 
+@api_view(['DELETE'])
+def delete_phone_number(request):
+    try:
+        phone_number_id = request.data.get('phone_number_id')
+        access_token = getattr(settings, 'ACCESS_TOKEN', None)
+
+        if not access_token:
+            return Response(
+                {"error": "ACCESS_TOKEN not found in environment variables"}, 
+                status=400
+            )
+        
+        url = f"https://graph.facebook.com/v23.0/{phone_number_id}"
+        
+        params = {
+            "access_token": access_token
+        }
+        
+        response = requests.delete(url, params=params)
+        
+        if response.status_code != 200:
+            return Response({
+                "error": f"Facebook API error: {response.status_code}",
+                "details": response.text,
+                "url": url
+            }, status=response.status_code)
+        
+        return Response(response.json())
+    
+    except Exception as e:
+        return Response(
+            {"error": f"Failed to delete phone number: {str(e)}"}, 
+            status=500
+        )
+
+@api_view(['POST'])
+def request_verification_code(request):
+    try:
+        if not getattr(settings, 'ACCESS_TOKEN', None):
+            return Response(
+                {"error": "ACCESS_TOKEN not found in environment variables"}, 
+                status=400
+            )
+        
+        phone_number_id = request.data.get('phone_number_id')
+        access_token = getattr(settings, 'ACCESS_TOKEN', None)
+
+        url = f"https://graph.facebook.com/v23.0/{phone_number_id}/request_code"
+
+        params = {
+            "access_token": access_token,
+            "code_method": "whatsapp",
+            "language": "en_US"
+        }
+
+        response = requests.post(url, params=params)
+
+        if response.status_code != 200:
+            return Response({
+                "error": f"Facebook API error: {response.status_code}",
+                "details": response.text,
+                "url": url
+            }, status=response.status_code)
+        
+        return Response(response.json())
+    
+    except Exception as e:
+        return Response(
+            {"error": f"Failed to request verification code: {str(e)}"}, 
+            status=500
+        )
 
