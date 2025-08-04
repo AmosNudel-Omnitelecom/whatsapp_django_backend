@@ -8,4 +8,5 @@ urlpatterns = [
     path('phone-numbers/register/', views.register_phone_number, name='register_phone_number'),
     path('webhook-subscribe/', views.subscribe_webhook, name='subscribe_webhook'),
     path('webhook-subscriptions/', views.get_waba_webhook_subscriptions, name='get_waba_webhook_subscriptions'),
+    path('exchange-code-for-token/', views.exchange_code_for_token, name='exchange_code_for_token'),
 ]

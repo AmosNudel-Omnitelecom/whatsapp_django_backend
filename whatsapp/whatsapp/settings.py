@@ -134,5 +134,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Environment variables for Facebook Graph API
 BUSINESS_PORTFOLIO_ID = os.environ.get('BUSINESS_PORTFOLIO_ID')
 ACCESS_TOKEN = os.environ.get('ACCESS_TOKEN')
+FACEBOOK_APP_ID = os.environ.get('FACEBOOK_APP_ID')
+FACEBOOK_APP_SECRET = os.environ.get('FACEBOOK_APP_SECRET')
 
 CORS_ALLOW_ALL_ORIGINS = True

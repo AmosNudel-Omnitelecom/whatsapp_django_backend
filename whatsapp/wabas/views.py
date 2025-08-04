@@ -226,3 +226,41 @@ def get_waba_webhook_subscriptions(request):
             status=500
         )
     
+@api_view(['POST'])
+def exchange_code_for_token(request):
+    try:
+        if not getattr(settings, 'FACEBOOK_APP_ID', None) or not getattr(settings, 'FACEBOOK_APP_SECRET', None):
+            return Response(
+                {"error": "FACEBOOK_APP_ID or FACEBOOK_APP_SECRET not found in environment variables"}, 
+                status=400
+            )
+        app_id = getattr(settings, 'FACEBOOK_APP_ID', None)
+        app_secret = getattr(settings, 'FACEBOOK_APP_SECRET', None)
+        code = request.data.get('code')
+
+        url = f"https://graph.facebook.com/v23.0/oauth/access_token"
+
+        params = {
+            "app_id": app_id,
+            "app_secret": app_secret,
+            "code": request.data.get('code')
+        }
+
+        response = requests.get(url, params=params)
+
+        if response.status_code != 200:
+            return Response({
+                "error": f"Facebook API error: {response.status_code}",
+                "details": response.text,
+                "url": url
+            }, status=response.status_code)
+        
+        return Response(response.json())
+
+    except Exception as e:
+        return Response(
+            {"error": f"Failed to exchange code for token: {str(e)}"}, 
+            status=500
+        )
+
+        
