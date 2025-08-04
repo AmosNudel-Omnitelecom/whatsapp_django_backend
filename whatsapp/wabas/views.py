@@ -158,3 +158,71 @@ def register_phone_number(request):
             status=500
         )
     
+@api_view(['POST'])
+def subscribe_webhook(request):
+    try:
+        if not getattr(settings, 'ACCESS_TOKEN', None):
+            return Response(
+                {"error": "ACCESS_TOKEN not found in environment variables"}, 
+                status=400
+            )
+        access_token = getattr(settings, 'ACCESS_TOKEN', None)
+        waba_id = request.data.get('waba_id')
+
+        url = f"https://graph.facebook.com/v23.0/{waba_id}/subscribed_apps"
+
+        params = {
+            "access_token": access_token
+        }
+
+        response = requests.post(url, params=params)
+
+        if response.status_code != 200:
+            return Response({
+                "error": f"Facebook API error: {response.status_code}",
+                "details": response.text,
+                "url": url
+            }, status=response.status_code)
+        
+        return Response(response.json())
+    
+    except Exception as e:
+        return Response(
+            {"error": f"Failed to subscribe webhook: {str(e)}"}, 
+            status=500
+        )
+    
+@api_view(['GET'])
+def get_waba_webhook_subscriptions(request):
+    try:
+        if not getattr(settings, 'ACCESS_TOKEN', None):
+            return Response(
+                {"error": "ACCESS_TOKEN not found in environment variables"}, 
+                status=400
+            )
+        access_token = getattr(settings, 'ACCESS_TOKEN', None)
+        waba_id = request.query_params.get('waba_id')
+
+        url = f"https://graph.facebook.com/v23.0/{waba_id}/subscribed_apps"
+
+        params = {
+            "access_token": access_token
+        }
+
+        response = requests.get(url, params=params)
+
+        if response.status_code != 200:
+            return Response({
+                "error": f"Facebook API error: {response.status_code}",
+                "details": response.text,
+                "url": url
+            }, status=response.status_code)
+        
+        return Response(response.json())
+    
+    except Exception as e:
+        return Response(
+            {"error": f"Failed to get waba webhook subscriptions: {str(e)}"}, 
+            status=500
+        )
+    
