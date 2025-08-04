@@ -165,3 +165,39 @@ def request_verification_code(request):
             status=500
         )
 
+@api_view(['POST'])
+def verify_code(request):
+    try:
+        if not getattr(settings, 'ACCESS_TOKEN', None):
+            return Response(
+                {"error": "ACCESS_TOKEN not found in environment variables"}, 
+                status=400
+            )
+        
+        phone_number_id = request.data.get('phone_number_id')
+        access_token = getattr(settings, 'ACCESS_TOKEN', None)
+        code = request.data.get('code')
+
+        url = f"https://graph.facebook.com/v23.0/{phone_number_id}/verify_code"
+
+        params = {
+            "access_token": access_token,
+            "code": code
+        }
+
+        response = requests.post(url, params=params)
+
+        if response.status_code != 200:
+            return Response({
+                "error": f"Facebook API error: {response.status_code}",
+                "details": response.text,
+                "url": url
+            }, status=response.status_code)
+        
+        return Response(response.json())
+    
+    except Exception as e:
+        return Response(
+            {"error": f"Failed to verify code: {str(e)}"}, 
+            status=500
+        )
