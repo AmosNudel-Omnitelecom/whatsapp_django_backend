@@ -144,7 +144,7 @@ def request_verification_code(request):
 
         params = {
             "access_token": access_token,
-            "code_method": "whatsapp",
+            "code_method": "SMS",
             "language": "en_US"
         }
 
