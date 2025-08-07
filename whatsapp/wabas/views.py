@@ -262,5 +262,3 @@ def exchange_code_for_token(request):
             {"error": f"Failed to exchange code for token: {str(e)}"}, 
             status=500
         )
-
-        

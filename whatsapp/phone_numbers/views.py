@@ -201,3 +201,38 @@ def verify_code(request):
             {"error": f"Failed to verify code: {str(e)}"}, 
             status=500
         )
+    
+@api_view(['GET'])
+def get_single_phone_number(request):
+    try:
+        if not getattr(settings, 'ACCESS_TOKEN', None):
+            return Response(
+                {"error": "ACCESS_TOKEN not found in environment variables"}, 
+                status=400
+            )
+        access_token = getattr(settings, 'ACCESS_TOKEN', None)
+        waba_phone_number_id = request.query_params.get('waba_phone_number_id')
+
+        url = f"https://graph.facebook.com/v23.0/{waba_phone_number_id}"
+
+        params = {
+            "access_token": access_token,
+            "fields": "id,account_mode,certificate,code_verification_status,conversational_automation,display_phone_number,eligibility_for_api_business_global_search,health_status,is_official_business_account,is_on_biz_app,is_pin_enabled,is_preverified_number,last_onboarded_time,messaging_limit_tier,name_status,new_certificate,new_display_name,new_name_status,official_business_account,platform_type,quality_score,search_visibility,status,throughput,verified_name"
+        }
+
+        response = requests.get(url, params=params)
+
+        if response.status_code != 200:
+            return Response({
+                "error": f"Facebook API error: {response.status_code}",
+                "details": response.text,
+                "url": url
+            }, status=response.status_code)
+        
+        return Response(response.json())
+    
+    except Exception as e:
+        return Response(
+            {"error": f"Failed to get single phone number: {str(e)}"}, 
+            status=500
+        )
